@@ -3,25 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="#FFFFFF"
+    android:background="@drawable/background"
     android:layout_height="match_parent">
 
-        <TextView
-            android:layout_marginTop="10dp"
-            android:id="@+id/txt_spo2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_alignParentTop="true"
-            android:text="SpO2"
-            android:textSize="30sp" />
 
         <ImageButton
-            android:layout_marginTop="-15dp"
-            android:layout_marginRight="-15dp"
+            android:layout_marginTop="-5dp"
+            android:layout_marginRight="-5dp"
             android:id="@+id/ic_battery"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:background="@drawable/ic_battery_foreground"
@@ -30,25 +21,20 @@
 
     <com.github.lzyzsd.circleprogress.ArcProgress
         android:id="@+id/arc_SpO2"
-        android:layout_width="270dp"
-        android:layout_height="270dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_gravity="center"
         android:layout_centerInParent="true"
-        android:layout_below="@+id/txt_spo2"
-        android:background="#FFFFFF"
-        custom:arc_bottom_text="SpO2%"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="90dp"
+        custom:arc_bottom_text="SpO₂%"
+        custom:arc_bottom_text_size="30dp"
         custom:arc_progress="00" />
 
-    <TextView
-        android:id="@+id/separator"
-        android:layout_below="@+id/arc_SpO2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="________________________________________________________" />
 
     <View
-        android:layout_below="@+id/separator"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/arc_SpO2"
         android:layout_centerInParent="true"
         android:id="@+id/ic_heart"
         android:layout_width="50dp"
@@ -56,23 +42,42 @@
         android:layout_gravity="center"
         android:background="@drawable/ic_heart_foreground" />
 
-    <com.github.lzyzsd.circleprogress.ArcProgress
-        android:id="@+id/arc_PRbpm"
-        android:layout_below="@+id/ic_heart"
+
+    <TextView
+        android:id="@+id/txt_heartBeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_width="270dp"
-        android:layout_height="270dp"
-        android:layout_gravity="center"
-        android:background="#FFFFFF"
-        custom:arc_bottom_text="SpO2%"
-        custom:arc_progress="00" />
+        android:layout_below="@id/ic_heart"
+        android:textSize="50dp"
+        android:textColor="#004dc9"
+        android:text="00"/>
+
+    <TextView
+        android:id="@+id/txt_PRbpm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PRbpm"
+        android:layout_below="@+id/txt_heartBeat"
+        android:layout_centerInParent="true"
+        android:textSize="30dp"
+        android:textColor="#004dc9"
+        />
+
 
     <Button
-        android:layout_below="@+id/arc_PRbpm"
+        android:layout_marginTop="80dp"
+        android:id="@+id/btnStart"
+        android:layout_below="@+id/txt_heartBeat"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Start measurement" />
+        android:text="Start/Stop"
+        android:textColor="#004dc9"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
+        android:background="@android:color/transparent"/>
+
 
 </RelativeLayout>
