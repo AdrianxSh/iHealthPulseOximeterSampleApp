@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.ic_battery)ImageButton battery;
     @BindView(R.id.arc_SpO2)ArcProgress oxygenRate;
     @BindView(R.id.btnStart)Button start;
-    @BindView(R.id.btnStop)Button stop;
     @BindView(R.id.txt_heartBeat)TextView heartBeat;
 
 
@@ -26,7 +25,5 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-
     }
 }
