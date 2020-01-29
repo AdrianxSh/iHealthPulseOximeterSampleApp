@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ihealthpulseoximetersampleapp">
-
-    <!--	Internet	communication	and	detect	/	manage	Wi-Fi	state	-->
+    <!-- Internet	communication	and	detect	/	manage	Wi-Fi	state -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-
-    <!--	Bluetooth	permission	for	communicating	with	iHealth	devices	-->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" /> <!-- Bluetooth	permission	for	communicating	with	iHealth	devices -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-
-    <!--	Permission	for	writing	on	device	memory	-->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> <!-- Permission	for	writing	on	device	memory -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-
 
     <application
         android:allowBackup="true"
@@ -25,6 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity"></activity>
+
         <service
             android:name="com.ido.ble.bluetooth.DeviceConnectService"
             android:exported="false" />
@@ -33,7 +28,7 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".ConnectActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
