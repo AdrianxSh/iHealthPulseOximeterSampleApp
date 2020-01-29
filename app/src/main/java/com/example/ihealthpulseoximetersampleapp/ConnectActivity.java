@@ -31,16 +31,13 @@ public class ConnectActivity extends AppCompatActivity {
 
         final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
-            Toast.makeText(getApplicationContext(),"Device not supported!",Toast.LENGTH_SHORT).show();
+
         }
 
-        connect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ConnectActivity.this, MainActivity.class);
-                ConnectActivity.this.startActivity(intent);
-                Toast.makeText(getApplicationContext(),"Succesfully connected to PO3 device",Toast.LENGTH_SHORT).show();
-            }
+        connect.setOnClickListener(v -> {
+            Intent intent = new Intent(ConnectActivity.this, MainActivity.class);
+            ConnectActivity.this.startActivity(intent);
+            Toast.makeText(getApplicationContext(),"Succesfully connected to PO3 device",Toast.LENGTH_SHORT).show();
         });
     }
 
