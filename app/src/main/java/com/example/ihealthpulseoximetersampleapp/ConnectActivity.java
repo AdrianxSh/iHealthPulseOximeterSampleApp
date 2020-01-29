@@ -2,6 +2,8 @@ package com.example.ihealthpulseoximetersampleapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -18,11 +20,19 @@ public class ConnectActivity extends AppCompatActivity {
 
     @BindView(R.id.btnConnect)Button connect;
 
+    private static final int REQUEST_ENABLE_BT = 0;
+    private static final int REQUEST_DISCOVERABLE_BT = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect);
         ButterKnife.bind(this);
+
+        final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(getApplicationContext(),"Device not supported!",Toast.LENGTH_SHORT).show();
+        }
 
         connect.setOnClickListener(new View.OnClickListener() {
             @Override

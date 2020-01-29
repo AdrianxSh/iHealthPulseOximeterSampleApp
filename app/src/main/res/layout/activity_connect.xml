@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/ic_device"
         android:layout_centerInParent="true"
-        android:text="Connect to device"
+        android:text="Scan"
         android:padding="5dp"
         />
 

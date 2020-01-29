@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".ConnectActivity"></activity>
+        <activity android:name=".MainActivity" />
 
         <service
             android:name="com.ido.ble.bluetooth.DeviceConnectService"
@@ -28,7 +29,7 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".ConnectActivity">
+        <activity android:name=".AuthenticateActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
