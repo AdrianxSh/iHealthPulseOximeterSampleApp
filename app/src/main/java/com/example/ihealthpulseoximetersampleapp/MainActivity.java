@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                         int oxygen = jsonObject.getInt(PoProfile.BLOOD_OXYGEN_PO);
                         int pulseRate = jsonObject.getInt(PoProfile.PULSE_RATE_PO);
                         oxygenRate.setProgress(oxygen);
-                        heartBeat.setText(pulseRate);
+                        heartBeat.setText(String.valueOf(pulseRate));
                         measureBtn.setEnabled(false);
                         batteryBtn.setEnabled(false);
                     } catch (JSONException e) {
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                         int oxygen = jsonObject.getInt(PoProfile.BLOOD_OXYGEN_PO);
                         int pulseRate = jsonObject.getInt(PoProfile.PULSE_RATE_PO);
                         oxygenRate.setProgress(oxygen);
-                        heartBeat.setText(pulseRate);
+                        heartBeat.setText(String.valueOf(pulseRate));
                         measureBtn.setEnabled(false);
                         batteryBtn.setEnabled(false);
                     } catch (JSONException e) {

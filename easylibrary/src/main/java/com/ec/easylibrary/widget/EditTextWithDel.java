@@ -10,12 +10,15 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
+
 import com.ec.easylibrary.R;
 
 /**
  * Created by Tina on 2015/7/10.
  */
-public class EditTextWithDel extends android.support.v7.widget.AppCompatEditText {
+public class EditTextWithDel extends AppCompatEditText {
     public static int RATIO_IMG_WIDTH = 2;
     private static final int  MSG_DELAY_TIME = 100;
     private Drawable imgDelete;
