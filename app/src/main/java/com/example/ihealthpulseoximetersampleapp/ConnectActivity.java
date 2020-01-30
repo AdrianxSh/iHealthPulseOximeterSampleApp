@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,11 +30,8 @@ public class ConnectActivity extends AppCompatActivity {
 
     @BindView(R.id.btnConnect)
     Button connect;
-    @BindView(R.id.pair)
-    TextView pairDevice;
 
     public static final int HANDLER_CONNECTED = 102;
-    public static final int HANDLER_CONNECT_FAIL = 104;
 
     private static final String TAG = "ScanFragment";
 
@@ -134,4 +132,7 @@ public class ConnectActivity extends AppCompatActivity {
             }
         }
     };
+
+
+
 }

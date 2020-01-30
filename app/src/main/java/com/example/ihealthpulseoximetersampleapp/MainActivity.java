@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,19 +21,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.util.Observable;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.ic_battery)
-    ImageButton batteryBtn;
+    ImageView batteryImage;
     @BindView(R.id.arc_SpO2)
     ArcProgress oxygenRate;
     @BindView(R.id.btnStart)
     Button measureBtn;
     @BindView(R.id.txt_heartBeat)
     TextView heartBeat;
+    @BindView(R.id.txt_battery)
+    TextView batteryPercentage;
 
     private int mClientCallbackId;
     private Po3Control mPo3Control;
@@ -45,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+
+
         Intent intent = getIntent();
         deviceMac = intent.getStringExtra("mac");
 
@@ -52,8 +61,18 @@ public class MainActivity extends AppCompatActivity {
         iHealthDevicesManager.getInstance().addCallbackFilterForDeviceType(mClientCallbackId, iHealthDevicesManager.TYPE_PO3);
         mPo3Control = iHealthDevicesManager.getInstance().getPo3Control(deviceMac);
 
-        batteryBtn.setOnClickListener(v -> showBattery());
+        showBattery();
         measureBtn.setOnClickListener(v -> startMeasuring());
+
+        Timer timer=new Timer();
+        TimerTask batteryTask=new TimerTask() {
+            @Override
+            public void run() {
+                showBattery();
+            }
+        };
+
+        timer.schedule(batteryTask,01,1000*60);
     }
 
     private void startMeasuring() {
@@ -97,7 +116,9 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         jsonobject = (JSONObject) jsonTokener.nextValue();
                         int battery = jsonobject.getInt(PoProfile.BATTERY_PO);
-                        Toast.makeText(MainActivity.this, battery + "%", Toast.LENGTH_SHORT).show();
+                        batteryPercentage.setText(battery+"%");
+                        setImage(batteryImage,battery);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -112,5 +133,31 @@ public class MainActivity extends AppCompatActivity {
         }
         iHealthDevicesManager.getInstance().unRegisterClientCallback(mClientCallbackId);
         super.onDestroy();
+    }
+
+    private void setImage(final ImageView imageView, final int value) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(value==100)
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_foreground));
+                else if((value<100)&&(value>=90))
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_90));
+                else if((value<90)&&(value>=80))
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_80));
+                else if((value<80)&&(value>=60))
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_60));
+                else if((value<60)&&(value>=50))
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_50));
+                else if((value<50)&&(value>=30))
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_30));
+                else if((value<30)&&(value>=20))
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_20));
+                else if((value<20)&&(value>=00))
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_low));
+                else
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_unknown));
+            }
+        });
     }
 }
