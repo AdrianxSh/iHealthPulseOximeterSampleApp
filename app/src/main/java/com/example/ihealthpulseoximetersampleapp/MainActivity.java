@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -76,11 +77,9 @@ public class MainActivity extends AppCompatActivity {
                         oxygenRate.setProgress(oxygen);
                         heartBeat.setText(String.valueOf(pulseRate));
                         measureBtn.setEnabled(false);
-                        batteryBtn.setEnabled(false);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    break;
                 case PoProfile.ACTION_RESULTDATA_PO:
                     try {
                         JSONObject jsonObject = (JSONObject) jsonTokener.nextValue();
@@ -90,23 +89,28 @@ public class MainActivity extends AppCompatActivity {
                         oxygenRate.setProgress(oxygen);
                         heartBeat.setText(String.valueOf(pulseRate));
                         measureBtn.setEnabled(false);
-                        batteryBtn.setEnabled(false);
                     } catch (JSONException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    break;
                 case PoProfile.ACTION_BATTERY_PO:
                     JSONObject jsonobject;
                     try {
                         jsonobject = (JSONObject) jsonTokener.nextValue();
                         int battery = jsonobject.getInt(PoProfile.BATTERY_PO);
-                        Toast.makeText(MainActivity.this, battery + "%", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, battery + "%", Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    break;
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        if(mPo3Control != null){
+            mPo3Control.disconnect();
+        }
+        iHealthDevicesManager.getInstance().unRegisterClientCallback(mClientCallbackId);
+        super.onDestroy();
+    }
 }

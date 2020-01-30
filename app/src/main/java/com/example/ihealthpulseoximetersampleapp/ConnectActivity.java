@@ -2,16 +2,25 @@ package com.example.ihealthpulseoximetersampleapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.ec.easylibrary.utils.ToastUtils;
 import com.example.ihealthpulseoximetersampleapp.base.BaseApplication;
+import com.ihealth.communication.control.HsProfile;
+import com.ihealth.communication.manager.iHealthDevicesCallback;
 import com.ihealth.communication.manager.iHealthDevicesManager;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,8 +32,14 @@ public class ConnectActivity extends AppCompatActivity {
     @BindView(R.id.pair)
     TextView pairDevice;
 
+    public static final int HANDLER_CONNECTED = 102;
+    public static final int HANDLER_CONNECT_FAIL = 104;
+
+    private static final String TAG = "ScanFragment";
+
     private String deviceName;
     private String deviceMac;
+    private int callbackId;
     private boolean authenticated;
 
     @Override
@@ -36,13 +51,14 @@ public class ConnectActivity extends AppCompatActivity {
         deviceName = "PO3";
         deviceMac = "907065F47324";
 
-        authenticated = authenticate();
+        initConnection();
+    }
 
-        pairDevice.setOnClickListener(v->{
-            Intent intent = new Intent(ConnectActivity.this, MainActivity.class);
-            intent.putExtra("mac", deviceMac);
-            startActivity(intent);
-        });
+    private void initConnection() {
+
+        callbackId = iHealthDevicesManager.getInstance().registerClientCallback(miHealthDevicesCallback);
+
+        authenticated = authenticate();
 
         connect.setOnClickListener(v -> connect());
     }
@@ -50,12 +66,9 @@ public class ConnectActivity extends AppCompatActivity {
     private void connect() {
         if (authenticated) {
             boolean req = iHealthDevicesManager.getInstance().connectDevice("", deviceMac, deviceName);
-            if(req) {
-                Toast.makeText(getApplicationContext(), "Succesfully connected to PO3 device", Toast.LENGTH_SHORT).show();
-                pairDevice.setText("Connect to device");
+            if (!req) {
+                Toast.makeText(this, "Authentication failed!", Toast.LENGTH_LONG).show();
             }
-        } else {
-            Toast.makeText(this, "Authentication failed!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -76,4 +89,49 @@ public class ConnectActivity extends AppCompatActivity {
         }
         return false;
     }
+
+    private iHealthDevicesCallback miHealthDevicesCallback = new iHealthDevicesCallback() {
+
+        @Override
+        public void onDeviceConnectionStateChange(String mac, String deviceType, int status, int errorID, Map manufactorData) {
+            Message msg = new Message();
+
+            if (status == iHealthDevicesManager.DEVICE_STATE_CONNECTED) {
+                msg.what = HANDLER_CONNECTED;
+                myHandler.sendMessage(msg);
+            }
+            else{
+                Toast.makeText(getApplicationContext(), "Connection unsuccessful", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        public void onScanFinish() {
+            super.onScanFinish();
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        iHealthDevicesManager.getInstance().unRegisterClientCallback(callbackId);
+    }
+
+    private Handler myHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case HANDLER_CONNECTED:
+                    Toast.makeText(getApplicationContext(), "Succesfully connected to PO3 device", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ConnectActivity.this, MainActivity.class);
+                    intent.putExtra("mac", deviceMac);
+                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "Succesfully connected to PO3 device", Toast.LENGTH_LONG).show();
+                default:
+                    break;
+            }
+        }
+    };
 }
