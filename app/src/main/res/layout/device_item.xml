@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:id="@+id/mainLayout"
+    android:gravity="top|center"
+    android:layout_margin="3dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <TextView
+    <Button
         android:id="@+id/deviceID"
         android:padding="5dp"
         android:textSize="15sp"
-        android:clickable="true"
-        android:textColor="#fefefe"
+        android:background="@color/white"
+        android:text="device mac"
+        android:textColor="@color/colorPrimary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-
-    </TextView>
+    </Button>
 
 </LinearLayout>

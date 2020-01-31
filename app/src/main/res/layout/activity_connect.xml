@@ -24,7 +24,7 @@
         android:layout_marginTop="25dp"
         android:background="@color/colorPrimaryDark"
         android:padding="5dp"
-        android:text="Connect"
+        android:text="Scan"
         android:textColor="#fefefe" />
 
     <androidx.recyclerview.widget.RecyclerView

@@ -4,12 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.view.KeyEvent;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.ihealth.communication.control.Po3Control;
@@ -21,7 +19,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.util.Observable;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,25 +41,24 @@ public class MainActivity extends AppCompatActivity {
     private int mClientCallbackId;
     private Po3Control mPo3Control;
 
-    private String deviceMac;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-
-
         Intent intent = getIntent();
-        deviceMac = intent.getStringExtra("mac");
+        String deviceMac = intent.getStringExtra("mac");
 
         mClientCallbackId = iHealthDevicesManager.getInstance().registerClientCallback(miHealthDevicesCallback);
         iHealthDevicesManager.getInstance().addCallbackFilterForDeviceType(mClientCallbackId, iHealthDevicesManager.TYPE_PO3);
         mPo3Control = iHealthDevicesManager.getInstance().getPo3Control(deviceMac);
 
         showBattery();
-        measureBtn.setOnClickListener(v -> startMeasuring());
+        measureBtn.setOnClickListener(v -> {
+            startMeasuring();
+
+        });
 
         Timer timer=new Timer();
         TimerTask batteryTask=new TimerTask() {
@@ -131,33 +127,39 @@ public class MainActivity extends AppCompatActivity {
         if(mPo3Control != null){
             mPo3Control.disconnect();
         }
-        iHealthDevicesManager.getInstance().unRegisterClientCallback(mClientCallbackId);
         super.onDestroy();
+    }
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent = new Intent(getApplicationContext(), ConnectActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private void setImage(final ImageView imageView, final int value) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(value==100)
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_foreground));
-                else if((value<100)&&(value>=90))
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_90));
-                else if((value<90)&&(value>=80))
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_80));
-                else if((value<80)&&(value>=60))
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_60));
-                else if((value<60)&&(value>=50))
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_50));
-                else if((value<50)&&(value>=30))
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_30));
-                else if((value<30)&&(value>=20))
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_20));
-                else if((value<20)&&(value>=00))
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_low));
-                else
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_unknown));
-            }
+        runOnUiThread(() -> {
+            if(value==100)
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_foreground));
+            else if((value<100)&&(value>=90))
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_90));
+            else if((value<90)&&(value>=80))
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_80));
+            else if((value<80)&&(value>=60))
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_60));
+            else if((value<60)&&(value>=50))
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_50));
+            else if((value<50)&&(value>=30))
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_30));
+            else if((value<30)&&(value>=20))
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_20));
+            else if((value<20)&&(value>=00))
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_low));
+            else
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_unknown));
         });
     }
 }
