@@ -8,7 +8,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.ihealthpulseoximetersampleapp.ConnectActivity;
+import com.example.ihealthpulseoximetersampleapp.view.ConnectActivity;
 import com.example.ihealthpulseoximetersampleapp.R;
 import com.example.ihealthpulseoximetersampleapp.model.Device;
 

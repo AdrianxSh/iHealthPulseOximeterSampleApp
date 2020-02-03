@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:name=".base.BaseApplication"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" />
+        <activity android:name=".view.MainActivity" />
 
         <service
             android:name="com.ido.ble.bluetooth.DeviceConnectService"
@@ -33,7 +33,7 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".ConnectActivity">
+        <activity android:name=".view.ConnectActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

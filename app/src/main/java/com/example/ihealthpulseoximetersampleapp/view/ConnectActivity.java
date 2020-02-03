@@ -1,4 +1,4 @@
-package com.example.ihealthpulseoximetersampleapp;
+package com.example.ihealthpulseoximetersampleapp.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +18,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.ihealthpulseoximetersampleapp.R;
 import com.example.ihealthpulseoximetersampleapp.adapter.DeviceAdapter;
 import com.example.ihealthpulseoximetersampleapp.base.BaseApplication;
 import com.example.ihealthpulseoximetersampleapp.model.Device;
@@ -45,7 +46,6 @@ public class ConnectActivity extends AppCompatActivity {
     public static final int HANDLER_CONNECTED = 102;
     public static final int HANDLER_DISCONNECTED = 103;
 
-    private int callbackId;
     private boolean authenticated;
 
     private DeviceAdapter deviceAdapter;
@@ -68,7 +68,7 @@ public class ConnectActivity extends AppCompatActivity {
     }
 
     private void initConnection() {
-        callbackId = iHealthDevicesManager.getInstance().registerClientCallback(miHealthDevicesCallback);
+        int callbackId = iHealthDevicesManager.getInstance().registerClientCallback(miHealthDevicesCallback);
         iHealthDevicesManager.getInstance().addCallbackFilterForDeviceType(callbackId, iHealthDevicesManager.TYPE_PO3);
         authenticated = authenticate();
     }
