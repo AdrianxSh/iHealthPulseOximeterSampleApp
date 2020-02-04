@@ -1,26 +1,27 @@
 package com.example.ihealthpulseoximetersampleapp.presenter;
 
-import android.content.Context;
+import android.widget.ImageView;
 
 import com.example.ihealthpulseoximetersampleapp.model.Device;
+import com.example.ihealthpulseoximetersampleapp.model.DeviceMeasurement;
+import com.ihealth.communication.control.Po3Control;
 
 public interface DeviceInterface {
     interface View{
-        void onGetDataSuccess(Device model);
-        void onGetDataFailure(String message);
+        void onGetDataSuccess(DeviceMeasurement model);
+        void onGetDataSuccessImage(DeviceMeasurement model);
     }
 
     interface Presenter{
-        void getData(Context context);
-    }
-
-    interface InteractorInterface{
-        void initCall(Context context);
-
+        void initController();
+        void startMeasuring();
+        void showBattery();
+        void destroy();
+        void setImage(final ImageView imageView, final int value);
     }
 
     interface onGetDataListener{
-        void onSuccess(Device model);
-        void onFailure(String message);
+        void onSuccess(DeviceMeasurement model);
+        void onSuccessSetImage(DeviceMeasurement model);
     }
 }

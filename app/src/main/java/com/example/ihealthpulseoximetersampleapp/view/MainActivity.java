@@ -11,6 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ihealthpulseoximetersampleapp.R;
+import com.example.ihealthpulseoximetersampleapp.model.Device;
+import com.example.ihealthpulseoximetersampleapp.model.DeviceMeasurement;
+import com.example.ihealthpulseoximetersampleapp.presenter.DeviceInterface;
+import com.example.ihealthpulseoximetersampleapp.presenter.DevicePresenter;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.ihealth.communication.control.Po3Control;
 import com.ihealth.communication.control.PoProfile;
@@ -27,7 +31,7 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DeviceInterface.View {
 
     @BindView(R.id.ic_battery)
     ImageView batteryImage;
@@ -40,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.txt_battery)
     TextView batteryPercentage;
 
-    private Po3Control mPo3Control;
+    private DevicePresenter devicePresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +55,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String deviceMac = intent.getStringExtra("mac");
 
-        int mClientCallbackId = iHealthDevicesManager.getInstance().registerClientCallback(miHealthDevicesCallback);
-        iHealthDevicesManager.getInstance().addCallbackFilterForDeviceType(mClientCallbackId, iHealthDevicesManager.TYPE_PO3);
-        mPo3Control = iHealthDevicesManager.getInstance().getPo3Control(deviceMac);
+        devicePresenter = new DevicePresenter(this, getApplicationContext(), deviceMac);
+        devicePresenter.initController();
 
         showBattery();
-        measureBtn.setOnClickListener(v -> {startMeasuring();
-        });
+        measureBtn.setOnClickListener(v -> startMeasuring());
 
         Timer timer = new Timer();
         TimerTask batteryTask = new TimerTask() {
@@ -71,96 +73,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startMeasuring() {
-        mPo3Control.startMeasure();
+        devicePresenter.startMeasuring();
     }
 
     private void showBattery() {
-        mPo3Control.getBattery();
+        devicePresenter.showBattery();
     }
-
-    private iHealthDevicesCallback miHealthDevicesCallback = new iHealthDevicesCallback() {
-        @Override
-        public void onDeviceNotify(String mac, String deviceType, String action, String message) {
-            JSONTokener jsonTokener = new JSONTokener(message);
-            switch (action) {
-                case PoProfile.ACTION_LIVEDA_PO:
-                    try {
-                        JSONObject jsonObject = (JSONObject) jsonTokener.nextValue();
-                        int oxygen = jsonObject.getInt(PoProfile.BLOOD_OXYGEN_PO);
-                        int pulseRate = jsonObject.getInt(PoProfile.PULSE_RATE_PO);
-                        oxygenRate.setProgress(oxygen);
-                        heartBeat.setText(String.valueOf(pulseRate));
-                        measureBtn.setEnabled(false);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                case PoProfile.ACTION_RESULTDATA_PO:
-                    try {
-                        JSONObject jsonObject = (JSONObject) jsonTokener.nextValue();
-                        String dataId = jsonObject.getString(PoProfile.DATAID);
-                        int oxygen = jsonObject.getInt(PoProfile.BLOOD_OXYGEN_PO);
-                        int pulseRate = jsonObject.getInt(PoProfile.PULSE_RATE_PO);
-                        oxygenRate.setProgress(oxygen);
-                        heartBeat.setText(String.valueOf(pulseRate));
-                        measureBtn.setEnabled(false);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                case PoProfile.ACTION_BATTERY_PO:
-                    JSONObject jsonobject;
-                    try {
-                        jsonobject = (JSONObject) jsonTokener.nextValue();
-                        int battery = jsonobject.getInt(PoProfile.BATTERY_PO);
-                        String batteryPerc = battery + "%";
-                        batteryPercentage.setText(batteryPerc);
-                        setImage(batteryImage, battery);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-            }
-        }
-    };
 
     @Override
     protected void onDestroy() {
-        if (mPo3Control != null) {
-            mPo3Control.disconnect();
-        }
+        devicePresenter.destroy();
         super.onDestroy();
     }
 
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(getApplicationContext(), ConnectActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
-        return super.onKeyDown(keyCode, event);
+    @Override
+    public void onGetDataSuccess(DeviceMeasurement model) {
+        oxygenRate.setProgress(model.getOxygen());
+        heartBeat.setText(String.valueOf(model.getPulseRate()));
+        measureBtn.setEnabled(false);
     }
 
-    private void setImage(final ImageView imageView, final int value) {
-        runOnUiThread(() -> {
-            if (value == 100)
-                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_foreground));
-            else if ((value < 100) && (value >= 90))
-                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_90));
-            else if ((value < 90) && (value >= 80))
-                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_80));
-            else if ((value < 80) && (value >= 60))
-                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_60));
-            else if ((value < 60) && (value >= 50))
-                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_50));
-            else if ((value < 50) && (value >= 30))
-                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_30));
-            else if ((value < 30) && (value >= 20))
-                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_20));
-            else if ((value < 20) && (value >= 0))
-                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_low));
-            else
-                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_battery_unknown));
-        });
+    @Override
+    public void onGetDataSuccessImage(DeviceMeasurement model) {
+        devicePresenter.setImage(batteryImage, model.getBattery());
+        batteryPercentage.setText(model.getBatteryPercentage());
     }
 }

@@ -18,10 +18,10 @@ import java.util.List;
 public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder> {
 
     private List<Device> devices = new ArrayList<>();
-    private ConnectActivity connectActivity;
+    private DeviceAdapterCallback callback;
 
-    public DeviceAdapter(ConnectActivity ca) {
-        connectActivity = ca;
+    public DeviceAdapter(DeviceAdapterCallback ca) {
+        callback = ca;
     }
 
     @NonNull
@@ -35,10 +35,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.fillView(devices.get(position).getMac());
-        holder.deviceId.setOnClickListener(v -> {
-            Device currentDevice = devices.get(position);
-            connectActivity.connect(currentDevice.getMac(), currentDevice.getType());
-        });
+        holder.deviceId.setOnClickListener(v -> callback.onDeviceSelected(devices.get(position)));
     }
 
     public void addDevice(Device device) {
@@ -64,5 +61,10 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
         void fillView(String s) {
             deviceId.setText(s);
         }
+    }
+
+    public interface DeviceAdapterCallback{
+
+        void onDeviceSelected(Device device);
     }
 }
